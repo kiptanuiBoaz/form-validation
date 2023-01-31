@@ -1,11 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { FaInfoCircle, FaCheck, FaTimes } from "react-icons/fa";
+import axios from "./api/axios";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const REGISTER_URL = '/register';
+
 
 export const Register = () => {
-    const errREf = useRef();
+    const errRef = useRef();
     const userRef = useRef();
 
     //user
@@ -26,6 +29,9 @@ export const Register = () => {
     //error and success msg
     const [success, setSuccess] = useState(false);
     const [errMsg, setErrMsg] = useState("");
+
+    //loading
+    const [loading,setLoading] = useState(false);
 
 
     useEffect(() => {
@@ -54,7 +60,9 @@ export const Register = () => {
 
     //submit function
     const handleSubmit = async (e) => {
+      
         e.preventDefault();
+        setLoading(true)
         // if button enabled with JS hack
         const v1 = USER_REGEX.test(user);
         const v2 = PWD_REGEX.test(pwd);
@@ -63,9 +71,36 @@ export const Register = () => {
             return;
         }
 
-        console.log(pwd, user);
-        setSuccess(true)
+        //submit through the api
+        try {
+            const response = await axios.post( 
+                REGISTER_URL, //route
+                JSON.stringify({user,pwd}),//payload
+                {
+                    headers: { "Content-Type": "application/json"},
+                    withCredentials: true,
+                    'Origin': 'http://127.0.0.1:5173'
+                }
+            );
+            console.log(response.data)
+            console.log(response)
+            console.log(response.accessToken)
+            setSuccess(true);
+            //empty input fields
+            setPwd(""); setMatchPwd(""); setUser("");
 
+        } catch (err) {
+            //handle errors
+            if (!err?.response) {
+                setErrMsg('No Server Response');
+            } else if (err.response?.status === 409) {
+                setErrMsg('Username Taken');
+            } else {
+                setErrMsg('Registration Failed')
+            }
+            errRef.current.focus();//for screen readers
+        }
+        setLoading(false);
     }
 
     return (
@@ -80,7 +115,7 @@ export const Register = () => {
             ) : (
                 <section>
                     {/* assertive means accesible by screen readers when fucused */}
-                    <p ref={errREf} className={errMsg ? "errmsg" : "offscreen"} aria-live='assertive'>
+                    <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live='assertive'>
                         {errMsg}
                     </p>
 
@@ -171,7 +206,7 @@ export const Register = () => {
                         </p>
 
                         {/* submit button */}
-                        <button disabled={!validName || !validPwd || !validMatch ? true : false}>Sign Up</button>
+                        <button disabled={!validName || !validPwd || !validMatch ? true : false}>{loading ? "Sending..." : "Sign Up"}</button>
                         {/* links */}
                         <p>
                             Already registered?<br />
