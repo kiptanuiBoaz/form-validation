@@ -9,7 +9,7 @@ function App() {
 
   return (
     <main className="App">
-      <Register/>
+      {/* <Register/> */}
       {/* <Login/> */}
     </main>
   )

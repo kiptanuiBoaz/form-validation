@@ -79,7 +79,7 @@ export const Register = () => {
                 {
                     headers: { "Content-Type": "application/json"},
                     withCredentials: true,
-                    'Origin': 'http://127.0.0.1:5173'
+                    // 'Origin': 'http://127.0.0.1:5173'
                 }
             );
             console.log(response.data)
@@ -93,6 +93,7 @@ export const Register = () => {
             //handle errors
             if (!err?.response) {
                 setErrMsg('No Server Response');
+                setLoading(false);
             } else if (err.response?.status === 409) {
                 setErrMsg('Username Taken');
             } else {
