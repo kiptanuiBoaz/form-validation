@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { FaInfoCircle, FaCheck, FaTimes } from "react-icons/fa";
-import axios from "./api/axios";
+import axios from "../api/axios";
+import {Link} from "react-router-dom"
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -78,8 +79,7 @@ export const Register = () => {
                 JSON.stringify({user,pwd}),//payload
                 {
                     headers: { "Content-Type": "application/json"},
-                    withCredentials: true,
-                    // 'Origin': 'http://127.0.0.1:5173'
+                    
                 }
             );
             console.log(response.data)
@@ -213,7 +213,7 @@ export const Register = () => {
                             Already registered?<br />
                             <span className="line">
                                 {/*put router link here*/}
-                                <a href="#">Sign In</a>
+                                <Link to="/login">Sign In</Link>
                             </span>
                         </p>
                     </form>
