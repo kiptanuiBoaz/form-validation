@@ -43,29 +43,33 @@ export const Login = () => {
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        withCredentials: true, //allows sending coockies
                     },
+                  
                     
                 }
             );
             console.log(response?.data)
             console.log(response)
-            console.log(response.accessToken)
+            console.log(response.data.accessToken)
             const accessToken = response?.data?.accessToken;
             const roles = response?.data?.roles;
 
             //send to global context
             setAuth({ pwd, user, accessToken, roles });
-            setUser("");
-            setPwd("");
+            
+            // setUser("");
+            // setPwd("");
             //navigate user to the route theyre from
             navigate(from, { replace: true });
         } catch (err) {
+           
             if (!err?.response) {
                 setErrMsg('No Server Response');
             } else if (err.response?.status === 400) {
                 setErrMsg('Missing Username or Password');
             } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
+                setErrMsg('Password is incorrect');
             } else {
                 setErrMsg('Login Failed');
             }
@@ -84,7 +88,7 @@ export const Login = () => {
         <section>
             {/* error msg */}
             <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-            <h1>Sign In</h1>
+            <Link to={"/login"}>Sign In</Link>
 
             <form onSubmit={handleSubmit}>
                 {/* username */}
