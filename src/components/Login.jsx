@@ -44,14 +44,14 @@ export const Login = () => {
                     headers: {
                         "Content-Type": "application/json",
                         withCredentials: true, //allows sending coockies
+                        credentials: 'include',
                     },
                   
                     
                 }
             );
-            console.log(response?.data)
-            console.log(response)
-            console.log(response.data.accessToken)
+            console.log(response?.data?.message)
+           
             const accessToken = response?.data?.accessToken;
             const roles = response?.data?.roles;
 

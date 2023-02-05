@@ -9,9 +9,8 @@ const useRefreshToken = () => {
     //called when the initial req fails due to expired refresh token
     const refresh = async () => {
         const response = await axios.get("/refresh", {
-            // headers:{
-                withCredentials: true, //allows sending coockies
-            // }
+           
+            
             
         });
 
