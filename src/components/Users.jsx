@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react";
-import axios from "../api/axios";
-import useRefreshToken from "../hooks/useRefreshToken";
+import useAxiosPrivate from "../hooks/useAxiosPrivate"
+
 
 const Users = () => {
     const [users, setUsers] = useState();
-    const refresh = useRefreshToken();
-
-    useEffect(()=>{
+    //get axiosPrivate instance from useAxios private hook
+    const axiosPrivate = useAxiosPrivate();
+   
+    useEffect(() => {
         let isMounted = true;
         const controller = new AbortController();//used to cancel pending requests if the compoent  unmounds
 
         const getUsers = async () => {
             try {
-                const response = await axios.get("/users", {
-                    signal: controller.signal //pass controller to axios
+                const response = await axiosPrivate.get("/users", {
+                    signal: controller.signal, //pass controller to axios
+
                 });
 
                 console.log(response.data)
@@ -21,15 +23,15 @@ const Users = () => {
             } catch (err) {
                 console.error(err);
             }
-        } 
+        }
 
         getUsers();
         //clean up fn
-        return ()=>{
+        return () => {
             isMounted = false; //dont attempt to set users state
             controller.abort(); //cancel any pending request
         }
-    },[]);
+    }, []);
 
     return (
 
@@ -41,11 +43,11 @@ const Users = () => {
                         {users.map((user, i) => <li key={i}>{user?.username}</li>)}
 
                     </ul>
-                ) 
-                :(<p>No users to display</p>)
+                )
+                : (<p>No users to display</p>)
 
             }
-            <button onClick={()=>{refresh()}}>Refresh</button>
+            
         </article>
     )
 

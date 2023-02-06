@@ -9,8 +9,7 @@ const useRefreshToken = () => {
     //called when the initial req fails due to expired refresh token
     const refresh = async () => {
         const response = await axios.get("/refresh", {
-           
-            
+            withCredentials: true,
             
         });
 
@@ -30,4 +29,4 @@ const useRefreshToken = () => {
     return refresh;
 }
 
-export default useRefreshToken
+export default useRefreshToken;
