@@ -2,11 +2,13 @@ import React, { useRef, useState, useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import axios from "../api/axios";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-const LOGIN_URL = "/auth"
+import useLocalStorage from "../hooks/useLocalStorage";
+const LOGIN_URL = "/auth";
+
 
 export const Login = () => {
     //setting Auth as global context
-    const { setAuth } = useAuth();
+    const { setAuth, persist, setPersist } = useAuth();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -16,7 +18,7 @@ export const Login = () => {
     const userRef = useRef();
     const errRef = useRef();
 
-    const [user, setUser] = useState('');
+    const [user, setUser] = useLocalStorage("user",'');
     const [pwd, setPwd] = useState('');
     const [errMsg, setErrMsg] = useState('');
 
@@ -41,29 +43,32 @@ export const Login = () => {
                 LOGIN_URL,
                 JSON.stringify({ user, pwd }),
                 {
+                    withCredentials: true, //allows sending coockies
                     headers: {
                         "Content-Type": "application/json",
-                        withCredentials: true, //allows sending coockies
-                        credentials: 'include',
+
                     },
-                  
-                    
+                    credentials: 'include',
+
+
                 }
             );
-            console.log(response?.data?.message)
-           
+
+
+            console.log(response?.data)
+
             const accessToken = response?.data?.accessToken;
             const roles = response?.data?.roles;
 
             //send to global context
             setAuth({ pwd, user, accessToken, roles });
-            
+
             // setUser("");
             // setPwd("");
             //navigate user to the route theyre from
             navigate(from, { replace: true });
         } catch (err) {
-           
+
             if (!err?.response) {
                 setErrMsg('No Server Response');
             } else if (err.response?.status === 400) {
@@ -79,8 +84,15 @@ export const Login = () => {
         }
     }
 
+    //toggle the persist state in global state
+    const togglePersist = () => {
+        setPersist(prev => !prev);
+    }
 
-
+    //toggle the persist state in localstorage
+    useEffect(() => {
+        localStorage.setItem("persist", persist);
+    }, [persist]);
 
 
     return (
@@ -116,6 +128,15 @@ export const Login = () => {
                 </input>
 
                 <button>Sign In</button>
+                <div className="PersistCheck">
+                    <input
+                        type="checkbox"
+                        id="persist"
+                        onChange={togglePersist}
+                        checked={persist}
+                    />
+                    <label htmlFor="id">Trust this device</label>
+                </div>
 
                 <p>
                     Need an Account?<br />

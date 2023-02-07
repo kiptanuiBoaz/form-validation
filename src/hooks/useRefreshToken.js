@@ -1,6 +1,6 @@
-import React from 'react'
+
 import axios from "../api/axios"; //axios intance
-import useAuth from "../hooks/useAuth"; //custom hook
+import useAuth from "./useAuth"; //custom hook
 
 const useRefreshToken = () => {
     //fn to update Authcontext
@@ -10,7 +10,7 @@ const useRefreshToken = () => {
     const refresh = async () => {
         const response = await axios.get("/refresh", {
             withCredentials: true,
-            
+
         });
 
         setAuth(prev => {
@@ -19,11 +19,13 @@ const useRefreshToken = () => {
             //update global auth state
             return ({
                 //overwrite the prev state with the new refresh token
-                ...prev, accessToken: response.data.accessToken
+                ...prev,
+                roles: response.data.roles,
+                accessToken: response.data.accessToken
             })
         })
         //return the new refresh token for use in the current request
-        return response.data.accessToken; 
+        return response.data.accessToken;
     };
 
     return refresh;
