@@ -10,7 +10,7 @@ const getLocalValue = (key, initValue) => {
 
     //result of a funciton
     if (initValue instanceof Function) return initValue();
-
+ 
 }
 
 
