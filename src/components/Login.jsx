@@ -46,14 +46,10 @@ export const Login = () => {
                     withCredentials: true, //allows sending coockies
                     headers: {
                         "Content-Type": "application/json",
-
                     },
                     credentials: 'include',
-
-
                 }
             );
-
 
             console.log(response?.data)
 
