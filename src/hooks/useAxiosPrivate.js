@@ -13,7 +13,7 @@ const useAxiosPrivate = () =>{
         //add request intercept
         const requestIntercept = axiosPrivate.interceptors.request.use(
             config =>{
-                //check if authorizatin doenst exit, meaning it's not a retry
+                //check if authorizatin doenst exist, meaning it's not a retry
                 if(!config?.headers["Authorization"]){
                     config.headers["Authorization"] = `Bearer ${auth?.accessToken}`
                 }
@@ -22,7 +22,7 @@ const useAxiosPrivate = () =>{
         )
         //add response interceptor
         const responseIntercept = axiosPrivate.interceptors.response.use(
-            //if respose exist just return the resone
+            //if respose exist just return the response
             response => response,
             //err thrown if token has expired
             async(err) => {
