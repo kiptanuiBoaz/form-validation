@@ -7,9 +7,9 @@ const Users = () => {
     const [users, setUsers] = useState();
     //get axiosPrivate instance from useAxios private hook
     const axiosPrivate = useAxiosPrivate();
-    // const navigate = useNavigate();
-    // const location = useLocation();
-   
+    const navigate = useNavigate();
+    const location = useLocation();
+
     useEffect(() => {
         let isMounted = true;
         //used to cancel pending requests if the compoent  unmounds
@@ -25,8 +25,13 @@ const Users = () => {
                 console.log(response.data)
                 isMounted && setUsers(response.data);
             } catch (err) {
-                console.error(err);
-                navigate('/login', { state: { from: location }, replace: true });
+                //axios controllere throws an error of cancelled when the component is unmounted 
+                // before the request is completed. And this is considered an ecxtected behaviour
+                if (err.message !== 'canceled') {
+                    console.error(err);
+                    // change the navigation state to previous location if theres an error
+                    navigate('/login', { state: { from: location }, replace: true });
+                }
             }
         }
 
@@ -52,7 +57,7 @@ const Users = () => {
                 : (<p>No users to display</p>)
 
             }
-            
+
         </article>
     )
 
